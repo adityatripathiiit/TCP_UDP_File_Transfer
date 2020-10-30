@@ -4,7 +4,7 @@ import sys
 from time import time 
 
 
-BUFSIZE = 1024
+BUFSIZE = 32
 serverName = "127.0.0.1"
 serverPort = 12345
 ADDRESS = (serverName, serverPort)
@@ -27,7 +27,7 @@ while (message not in books.keys()):
 
 start = time()
 clientSocket = socket(AF_INET,SOCK_DGRAM)
-
+# clientSocket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, BUFSIZE)
 clientSocket.sendto(books[message].encode(),ADDRESS) 
 
 
@@ -37,9 +37,10 @@ with open(fileName, "wb") as f:
     print("file opened") 
     try:
         while(True):
-            print("Receiving data ...")
+            # print("Receiving data ...")
             clientSocket.settimeout(TIMEOUT)
             chunk,ADDRESS = clientSocket.recvfrom(BUFSIZE)
+            # print(ADDRESS)
             f.write(chunk)
     except timeout:
         f.close()
