@@ -4,11 +4,11 @@ import sys
 from time import time 
 
 
-BUFSIZE = 32
-serverName = "127.0.0.1"
-serverPort = 12345
-ADDRESS = (serverName, serverPort)
-TIMEOUT = 2
+BUFSIZE = 32                        # Buffer size
+serverName = "127.0.0.1"            # Server IP(localhost)
+serverPort = 12345                  # Server Port number
+ADDRESS = (serverName, serverPort)  # forming tuple of server IP and port
+TIMEOUT = 2                         # Defining timeout (in seconds) for UDP client to timeout the connection after give seconds of inactivity
 
 
 books = {"1": "../novels/Heartsease.txt", "2": "../novels/Roget’s Thesaurus.txt", "3": "../novels/The 1991 CIA World Factbook.txt", "4":"../novels/The Conquest Of Peru.txt", "5": "../novels/War and Peace.txt"}
@@ -25,9 +25,11 @@ while (message not in books.keys()):
     print("Please choose a valid book number") 
     message = input("Enter the book Number: ")
 
-start = time()
+# Creating the socket
 clientSocket = socket(AF_INET,SOCK_DGRAM)
-# clientSocket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, BUFSIZE)
+#starting the timer 
+start = time()
+#Sending bookname to the server
 clientSocket.sendto(books[message].encode(),ADDRESS) 
 
 
@@ -38,11 +40,12 @@ with open(fileName, "wb") as f:
     try:
         while(True):
             # print("Receiving data ...")
-            clientSocket.settimeout(TIMEOUT)
-            chunk,ADDRESS = clientSocket.recvfrom(BUFSIZE)
+            clientSocket.settimeout(TIMEOUT)               #starting the time for timeout
+            chunk,ADDRESS = clientSocket.recvfrom(BUFSIZE) # Receiving the data in chunks of buffer size
             # print(ADDRESS)
             f.write(chunk)
     except timeout:
+        # If timout occurs
         f.close()
         print("File received Successfully, closing the connection ...")
         clientSocket.close()
